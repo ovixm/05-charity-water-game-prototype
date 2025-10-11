@@ -33,6 +33,32 @@ body {
     height: 100%;
 }
 
+#mobile-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.control-row {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+#mobile-controls button {
+  width: 120px;
+  height: 120px;
+  font-size: 24px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin: 0 5px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
 #game {
   width: 100vw;
   height: 100vh;
@@ -98,6 +124,23 @@ body {
   display: grid;
   grid-template-columns: repeat(20, 48px);
   grid-auto-rows: 48px;
+}
+
+.fence-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(20, 48px);
+  grid-auto-rows: 48px;
+
+  z-index: 3;
+}
+
+.fence-layer .tile {
+  background-image: url('Fences.png');
 }
 
 .soil-layer {

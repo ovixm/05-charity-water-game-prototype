@@ -5,8 +5,6 @@ console.log('JavaScript file is linked correctly.');
 
 const player = document.getElementById('player');
 const speed = 2;
-let x = 200;
-let y = 200;
 const frameWidth = 48; // Width of a single frame in the sprite sheet
 const frameHeight = 48; // Height of a single frame in the sprite sheet
 const totalFrames = 8; // Total number of frames in the sprite sheet
@@ -20,29 +18,54 @@ let lastDirectionRow = 0; // To remember the last direction for idle state
 //tilemap
 const baseLayer = document.querySelector('.soil-layer');
 const grassLayer = document.querySelector('.grass-layer');
+const fenceLayer = document.querySelector('.fence-layer');
+
 
 // Tile indices based on the tileset image
 // 0: empty, 1: soil, 2: water, 11-27: various grass tiles, 44: border/void tile
 
 const baseMap = [
   [0, 1, 1, 1, 1, 1, 1, 1, 1 , 1, 1, 2, 44, 44, 44, 44, 44, 44, 44 , 44],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12 , 12, 12, 27, 1, 1, 1, 1, 1, 2, 44 , 44],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12 , 12, 12, 12, 12, 12, 12, 12, 12, 27, 1 , 2],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 , 13],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 , 13],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 , 13],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 , 13],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 , 13],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 , 13],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 , 13],
-  [11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 16 , 24],
-  [22, 17, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13 , 44],
-  [44, 11, 12, 12, 12, 12, 12, 12, 12 , 12, 12, 12, 16, 23, 23, 23, 23, 23, 24 , 44],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1 , -1, -1, 27, 1, 1, 1, 1, 1, 2, 44 , 44],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1 , -1, -1, -1, -1, -1, -1, -1, -1, 27, 1 , 2],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 , 13],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 , 13],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 , 13],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 , 13],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 , 13],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 , 13],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 , 13],
+  [11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16 , 24],
+  [22, 17, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 13 , 44],
+  [44, 11, -1, -1, -1, -1, -1, -1, -1 , -1, -1, -1, 16, 23, 23, 23, 23, 23, 24 , 44],
   [44, 22, 23, 23, 23, 23, 23, 23, 23 , 23, 23, 23, 24, 44, 44, 44, 44, 44, 44 , 44],
 ];
 
 const tileSize = 16;
 const tilesPerRow = 11; // Number of tiles per row in the tileset image
+
+// Find the center tile's row and column
+const mapRows = baseMap.length;
+const mapCols = baseMap[0].length;
+
+// Each tile is 16px, but scaled by 3 in CSS
+const scaledTileSize = tileSize * 3;
+
+// Calculate the map's pixel width and height
+const mapPixelWidth = mapCols * scaledTileSize;
+const mapPixelHeight = mapRows * scaledTileSize;
+
+// Set the row and column you want the player to start on
+const startRow = 5; // Change this to your desired row (0-based)
+const startCol = 8; // Change this to your desired column (0-based)
+
+// Calculate the pixel position for that tile
+const startX = (window.innerWidth / 2) - (mapPixelWidth / 2) + (startCol * scaledTileSize);
+const startY = (window.innerHeight / 2) - (mapPixelHeight / 2) + (startRow * scaledTileSize);
+
+// Set the player's position to that tile
+let x = startX;
+let y = startY;
 
 const mapContainer = document.getElementById('tilemap');
 
@@ -51,15 +74,19 @@ baseMap.forEach(row => {
     const tile = document.createElement('div');
     tile.classList.add('tile');
 
+    if(!(tileIndex < 0)) {
     const x = (tileIndex % tilesPerRow) * tileSize;
     const y = Math.floor(tileIndex / tilesPerRow) * tileSize;
     tile.style.backgroundPosition = '-'+x+'px -'+y+'px';
+    }
+    else {
+      tile.style.background = 'transparent'; // Empty tile
+    }
 
     baseLayer.appendChild(tile);
   });
 }
 )
-
 
 
 const grassMap = [
@@ -94,6 +121,41 @@ grassMap.forEach(row => {
 }
 )
 
+const fenceMap = [
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 1, 7, 4, 35, 35, 35, 35, 7, 35, 3, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 23, 4, 7, 7, 35, 4, 35, 35, 7, 25, -1, -1, -1, -1, -1, -1, -1, -1],
+];
+
+fenceMap.forEach(row => {
+  row.forEach(tileIndex => {
+    const tile = document.createElement('div');
+    tile.classList.add('tile');
+  
+    if(!(tileIndex < 0)) {
+    const x = (tileIndex % tilesPerRow) * tileSize;
+    const y = Math.floor(tileIndex / tilesPerRow) * tileSize;
+    tile.style.backgroundPosition = '-'+x+'px -'+y+'px';
+    }
+    else {
+      tile.style.background = 'transparent'; // Empty tile
+    }
+
+    fenceLayer.appendChild(tile);
+  });
+}
+)
+
 const keys = {
     up: false,
     down: false,
@@ -112,6 +174,30 @@ const keyMap = {
     'arrowright': 'right'
 };
 
+function checkMobile() {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const mobileControls = document.getElementById('mobile-controls');
+  if (isMobile) {
+    mobileControls.style.display = 'block';
+  } else {
+    mobileControls.style.display = 'none';
+  }
+}
+checkMobile();
+
+function bindTouchButton(button, keyCode) {
+  const btn = document.getElementById(button);
+
+  btn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+  keyMap[keyCode] && (keys[keyMap[keyCode]] = true);
+  });
+
+  btn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+  keyMap[keyCode] && (keys[keyMap[keyCode]] = false);
+  } );
+}
 document.addEventListener('keydown', (e) => {
   const direction = keyMap[e.key.toLowerCase()];
     if (direction) {
@@ -125,6 +211,11 @@ document.addEventListener('keyup', (e) => {
         keys[direction] = false;
     }
 });
+
+bindTouchButton('up-btn', 'w');
+bindTouchButton('down-btn', 's');
+bindTouchButton('left-btn', 'a');
+bindTouchButton('right-btn', 'd');
 
 function getMovementDirection() {
   if (keys.up) return 'up';
@@ -170,6 +261,7 @@ function updateSprite(isIdle) {
 }
 
 const solidTiles = [0, 2, 11, 13, 16, 17, 23, 24, 44];
+const fenceTiles = [1,3,4,7,11, 25,35, 23];
 
 function isColliding(nextX, nextY) {
 
@@ -177,9 +269,8 @@ function isColliding(nextX, nextY) {
   const offset = (48 * 3 - hitboxSize) / 2;
 
   const hitboxLeft = nextX + offset;
-  const hitboxRight = nextX + offset + hitboxSize;
   const hitboxTop = nextY + offset;
-  const hitboxBottom = nextY + offset + hitboxSize;
+
 
     // Calculate which tile(s) the hitbox would be over
   const tilemapRect = mapContainer.getBoundingClientRect();
@@ -190,7 +281,6 @@ function isColliding(nextX, nextY) {
   const tileX = Math.floor((hitboxLeft - mapLeft) / (tileSize * 3));
   const tileY = Math.floor((hitboxTop - mapTop) / (tileSize * 3));
 
-  const hitboxTiles = Math.ceil(hitboxSize / (tileSize * 3));
 
   // Check all four corners of the hitbox
   const corners = [
@@ -210,6 +300,10 @@ function isColliding(nextX, nextY) {
     ) {
       return true; // Collision detected
     }
+    if (fenceTiles.includes(fenceMap[cy][cx])) {
+      return true; // Collision with fence
+    }
+
   }
   return false;
 }
@@ -260,5 +354,7 @@ function gameLoop() {
   updateSprite(!isMoving);
   requestAnimationFrame(gameLoop);
 }
+
+
 
 gameLoop();

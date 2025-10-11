@@ -4,24 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Charity Water Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Welcome to the Charity Water Game Prototype</h1>
 
 
-
-
     <div id="game">
       <div id="tilemap">   
         <div class="tile-layer soil-layer"></div>  
         <div class="tile-layer grass-layer"></div>
+        <div class="tile-layer fence-layer"></div>
+        <div class="tile-layer house-layer"></div>
+        <div class="tile-layer graden-layer"></div>
         </div>
 
       </div>
 
       <div id="player">
         <div id="hitbox"></div>
+      </div>
+
+    </div>
+
+    <div id="mobile-controls" style="display: none;">
+      <div class="control-row">
+        <button id="up-btn"><i class="fa fa-caret-up" style="font-size:32px"></i></button>
+
+        <button id="left-btn"><i class="fa fa-caret-left" style="font-size:32px"></i></button>
+
+        <button id="down-btn"><i class="fa fa-caret-down" style="font-size:32px"></i></button>
+
+        <button id="right-btn"><i class="fa fa-caret-right" style="font-size:32px"></i></button>
       </div>
 
     </div>
