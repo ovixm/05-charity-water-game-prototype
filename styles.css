@@ -13,3 +13,31 @@ Secondary Colors:
 - Pink:       #F16061
 
 */
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #8BD1CB;
+}
+
+#game {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: #333;
+}
+
+#player {
+  display: block;
+  width: 48px;
+  height: 48px;
+  background-image: url('character-sprite.png');
+  background-size: 384px 1152px; /* 8 columns, 24 rows */
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  border: 2px solid red;
+  box-sizing: content-box;
+}
