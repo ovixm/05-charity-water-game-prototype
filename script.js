@@ -3,11 +3,13 @@ console.log('JavaScript file is linked correctly.');
 
 const actionbox = document.getElementById('action-box');
 
+let scalingFactor = 3; // Initial scaling factor
+
 
 const player = document.getElementById('player');
 const speed = 2;
-const frameWidth = 48; // Width of a single frame in the sprite sheet
-const frameHeight = 48; // Height of a single frame in the sprite sheet
+let frameWidth = 16 * scalingFactor; // Width of a single frame in the sprite sheet
+let frameHeight = 16 * scalingFactor; // Height of a single frame in the sprite sheet
 const totalFrames = 8; // Total number of frames in the sprite sheet
 let currentFrame = 0;
 let frameTick = 0; // To control the speed of animation
@@ -45,26 +47,26 @@ const baseMap = [
   [44, 22, 23, 23, 23, 23, 23, 23, 23 , 23, 23, 23, 24, 44, 44, 44, 44, 44, 44 , 44],
 ];
 
-const tileSize = 16;
+let tileSize = 16;
 
 // Find the center tile's row and column
 const mapRows = baseMap.length;
 const mapCols = baseMap[0].length;
 
-// Each tile is 16px, but scaled by 3 in CSS
-const scaledTileSize = tileSize * 3;
+// Each tile is 16px, but scaled by scalingFactor in CSS
+let scaledTileSize = tileSize * scalingFactor;
 
 // Calculate the map's pixel width and height
-const mapPixelWidth = mapCols * scaledTileSize;
-const mapPixelHeight = mapRows * scaledTileSize;
+let mapPixelWidth = mapCols * scaledTileSize;
+let mapPixelHeight = mapRows * scaledTileSize;
 
 // Set the row and column you want the player to start on
-const startRow = 5; // Change this to your desired row (0-based)
-const startCol = 8; // Change this to your desired column (0-based)
+const startRow = 6; // Change this to your desired row (0-based)
+const startCol = 11; // Change this to your desired column (0-based)
 
 // Calculate the pixel position for that tile
-const startX = (window.innerWidth / 2) - (mapPixelWidth / 2) + (startCol * scaledTileSize);
-const startY = (window.innerHeight / 2) - (mapPixelHeight / 2) + (startRow * scaledTileSize);
+let startX = (window.innerWidth / 2) - (mapPixelWidth / 2) + (startCol * scaledTileSize);
+let startY = (window.innerHeight / 2) - (mapPixelHeight / 2) + (startRow * scaledTileSize);
 
 // Set the player's position to that tile
 let x = startX;
@@ -322,6 +324,8 @@ function updateStatus()
           break;
       }
     }
+
+    actionsDone[action] = false;
   }
 
 
@@ -489,6 +493,24 @@ bindTouchButton('down-btn', 's');
 bindTouchButton('left-btn', 'a');
 bindTouchButton('right-btn', 'd');
 
+// Bind E button for action on mobile
+const eBtn = document.getElementById('e-btn');
+if (eBtn) {
+  // When the E button is touched or clicked, perform the action if available
+  eBtn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    if (!eKeyPressed && actionOn) {
+      performAction();
+    }
+  });
+  eBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!eKeyPressed && actionOn) {
+      performAction();
+    }
+  });
+}
+
 function getMovementDirection() {
   if (keys.up) return 'up';
   if (keys.down) return 'down';
@@ -541,8 +563,8 @@ const gardenTiles = [-2];
 
 function isColliding(nextX, nextY) {
 
-  const hitboxSize = 16 * 3;
-  const offset = (48 * 3 - hitboxSize) / 2;
+  let hitboxSize = 16 * scalingFactor;
+  let offset = (48 * scalingFactor - hitboxSize) / 2;
 
   const hitboxLeft = nextX + offset;
   const hitboxTop = nextY + offset;
@@ -591,7 +613,7 @@ function isColliding(nextX, nextY) {
     }
     if( houseTiles.includes(houseMap[cy][cx] ))
     {
-      isBlocked = true;
+      isBlocked = true
     }
     if( furnitureTiles.includes(furnitureMap[cy][cx] ))
     {
@@ -620,8 +642,10 @@ function isColliding(nextX, nextY) {
   }
   if (!actionTriggered) endTrigger();
   
+  
   return isBlocked;
 }
+
 
 function updatePosition() {
 
@@ -664,6 +688,29 @@ function updatePosition() {
 }
 
 function gameLoop() {
+
+  if(window.innerWidth > 1100)
+  {
+    scalingFactor = 3;
+    frameHeight = 16 * scalingFactor;
+    frameWidth = 16 * scalingFactor;
+    tileSize = 16;
+  }
+  else if(window.innerWidth > 800)
+  {
+    scalingFactor = 2/3;
+    frameHeight = 48 * scalingFactor;
+    frameWidth = 48 * scalingFactor;
+    tileSize = 10.67;
+  }
+  else
+  {
+    scalingFactor = 1/2;
+    frameHeight = 48 * scalingFactor;
+    frameWidth = 48 * scalingFactor;
+    tileSize = 8;
+  }
+
   const isMoving = updatePosition();
   updateSprite(!isMoving);
   requestAnimationFrame(gameLoop);
