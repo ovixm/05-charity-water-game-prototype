@@ -21,6 +21,7 @@ const grassLayer = document.querySelector('.grass-layer');
 const fenceLayer = document.querySelector('.fence-layer');
 const houseLayer = document.querySelector('.house-layer');
 const furnitureLayer = document.querySelector('.furniture-layer');
+const wellLayer = document.querySelector('.well-layer');
 
 
 // Tile indices based on the tileset image
@@ -240,6 +241,43 @@ furnitureMap.forEach(row => {
 }
 )
 
+const wellMap = [
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+];
+
+wellMap.forEach(row => {
+  const tilesPerRow = 2; 
+  row.forEach(tileIndex => {
+    const tile = document.createElement('div');
+    tile.classList.add('tile');
+  
+    if(!(tileIndex < 0)) {
+    const x = (tileIndex % tilesPerRow) * tileSize;
+    const y = Math.floor(tileIndex / tilesPerRow) * tileSize;
+    tile.style.backgroundPosition = '-'+x+'px -'+y+'px';
+    }
+    else {
+      tile.style.background = 'transparent'; // Empty tile
+    }
+
+    wellLayer.appendChild(tile);
+  });
+}
+)
+
 
 const keys = {
     up: false,
@@ -349,6 +387,7 @@ const solidTiles = [0, 2, 11, 13, 16, 17, 23, 24, 44];
 const fenceTiles = [1,3,4,7,11, 25,35, 23];
 const houseTiles = [0, 1, 2, 5, 7, 10, 11, 12, 21, 23];
 const furnitureTiles = [11, 19, 30, 22, 23, 24];
+const wellTiles = [0,1,2,3];
 
 function isColliding(nextX, nextY) {
 
@@ -397,6 +436,10 @@ function isColliding(nextX, nextY) {
       return true;
     }
     if( furnitureTiles.includes(furnitureMap[cy][cx] ))
+    {
+      return true;
+    }
+    if( wellTiles.includes(wellMap[cy][cx] ))
     {
       return true;
     }
