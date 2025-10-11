@@ -19,6 +19,8 @@ let lastDirectionRow = 0; // To remember the last direction for idle state
 const baseLayer = document.querySelector('.soil-layer');
 const grassLayer = document.querySelector('.grass-layer');
 const fenceLayer = document.querySelector('.fence-layer');
+const houseLayer = document.querySelector('.house-layer');
+const doorLayer = document.querySelector('.door-layer');
 
 
 // Tile indices based on the tileset image
@@ -42,7 +44,6 @@ const baseMap = [
 ];
 
 const tileSize = 16;
-const tilesPerRow = 11; // Number of tiles per row in the tileset image
 
 // Find the center tile's row and column
 const mapRows = baseMap.length;
@@ -70,6 +71,7 @@ let y = startY;
 const mapContainer = document.getElementById('tilemap');
 
 baseMap.forEach(row => {
+  const tilesPerRow = 11; 
   row.forEach(tileIndex => {
     const tile = document.createElement('div');
     tile.classList.add('tile');
@@ -107,6 +109,7 @@ const grassMap = [
 ];
 
 grassMap.forEach(row => {
+  const tilesPerRow = 11; 
   row.forEach(tileIndex => {
     const tile = document.createElement('div');
     tile.classList.add('tile');
@@ -135,9 +138,11 @@ const fenceMap = [
   [-1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, 23, 4, 7, 7, 35, 4, 35, 35, 7, 25, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
 ];
 
 fenceMap.forEach(row => {
+  const tilesPerRow = 11; 
   row.forEach(tileIndex => {
     const tile = document.createElement('div');
     tile.classList.add('tile');
@@ -155,6 +160,44 @@ fenceMap.forEach(row => {
   });
 }
 )
+
+const houseMap = [
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 0, 1, 1, 1, 1, 1, 1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 5, 6, 6, 6, 6, 6, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 5, 6, 6, 6, 6, 6, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 5, 6, 6, 6, 6, 6, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 10, 11, 21, 6, 6, 23, 11, 12, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+];
+
+houseMap.forEach(row => {
+  const tilesPerRow = 5; 
+  row.forEach(tileIndex => {
+    const tile = document.createElement('div');
+    tile.classList.add('tile');
+  
+    if(!(tileIndex < 0)) {
+    const x = (tileIndex % tilesPerRow) * tileSize;
+    const y = Math.floor(tileIndex / tilesPerRow) * tileSize;
+    tile.style.backgroundPosition = '-'+x+'px -'+y+'px';
+    }
+    else {
+      tile.style.background = 'transparent'; // Empty tile
+    }
+
+    houseLayer.appendChild(tile);
+  });
+}
+)
+
 
 const keys = {
     up: false,
@@ -262,6 +305,7 @@ function updateSprite(isIdle) {
 
 const solidTiles = [0, 2, 11, 13, 16, 17, 23, 24, 44];
 const fenceTiles = [1,3,4,7,11, 25,35, 23];
+const houseTiles = [0, 1, 2, 5, 7, 10, 11, 12, 21, 23];
 
 function isColliding(nextX, nextY) {
 
@@ -296,12 +340,11 @@ function isColliding(nextX, nextY) {
       cx < 0 || cx >= baseMap[0].length)
       { return true; } // Out of bounds is solid
     if (
-      solidTiles.includes(baseMap[cy][cx])
-    ) {
-      return true; // Collision detected
-    }
-    if (fenceTiles.includes(fenceMap[cy][cx])) {
-      return true; // Collision with fence
+      solidTiles.includes(baseMap[cy][cx]) ||
+      fenceTiles.includes(fenceMap[cy][cx]) ||
+      houseTiles.includes(houseMap[cy][cx] || (doorTiles.includes(doorMap[cy][cx] == null) || doorTiles.includes(doorMap[cy][cx]))
+    )) {
+      return true;
     }
 
   }
