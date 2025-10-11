@@ -20,7 +20,7 @@ const baseLayer = document.querySelector('.soil-layer');
 const grassLayer = document.querySelector('.grass-layer');
 const fenceLayer = document.querySelector('.fence-layer');
 const houseLayer = document.querySelector('.house-layer');
-const doorLayer = document.querySelector('.door-layer');
+const furnitureLayer = document.querySelector('.furniture-layer');
 
 
 // Tile indices based on the tileset image
@@ -203,6 +203,43 @@ houseMap.forEach(row => {
 }
 )
 
+const furnitureMap = [
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 11, 34, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 19, 6, 6, 22, 30, 23, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 6, 6, 6, 6, 6, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, 6, 6, 6, 6, 6, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, 52, 53, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+];
+
+furnitureMap.forEach(row => {
+  const tilesPerRow = 9; 
+  row.forEach(tileIndex => {
+    const tile = document.createElement('div');
+    tile.classList.add('tile');
+  
+    if(!(tileIndex < 0)) {
+    const x = (tileIndex % tilesPerRow) * tileSize;
+    const y = Math.floor(tileIndex / tilesPerRow) * tileSize;
+    tile.style.backgroundPosition = '-'+x+'px -'+y+'px';
+    }
+    else {
+      tile.style.background = 'transparent'; // Empty tile
+    }
+
+    furnitureLayer.appendChild(tile);
+  });
+}
+)
+
 
 const keys = {
     up: false,
@@ -311,6 +348,7 @@ function updateSprite(isIdle) {
 const solidTiles = [0, 2, 11, 13, 16, 17, 23, 24, 44];
 const fenceTiles = [1,3,4,7,11, 25,35, 23];
 const houseTiles = [0, 1, 2, 5, 7, 10, 11, 12, 21, 23];
+const furnitureTiles = [11, 19, 30, 22, 23, 24];
 
 function isColliding(nextX, nextY) {
 
@@ -355,6 +393,10 @@ function isColliding(nextX, nextY) {
       return true;
     }
     if( houseTiles.includes(houseMap[cy][cx] ))
+    {
+      return true;
+    }
+    if( furnitureTiles.includes(furnitureMap[cy][cx] ))
     {
       return true;
     }
