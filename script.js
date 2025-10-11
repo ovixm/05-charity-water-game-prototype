@@ -1,10 +1,12 @@
 // Log a message to the console to ensure the script is linked correctly
 console.log('JavaScript file is linked correctly.');
 
+
+
 const player = document.getElementById('player');
 const speed = 2;
-let x = 1;
-let y = 1;
+let x = 200;
+let y = 200;
 const frameWidth = 48; // Width of a single frame in the sprite sheet
 const frameHeight = 48; // Height of a single frame in the sprite sheet
 const totalFrames = 8; // Total number of frames in the sprite sheet
@@ -167,25 +169,79 @@ function updateSprite(isIdle) {
   player.style.backgroundPosition = `${bgX}px ${bgY}px`;
 }
 
+const solidTiles = [0, 2, 11, 13, 16, 17, 23, 24, 44];
+
+function isColliding(nextX, nextY) {
+
+  const hitboxSize = 16 * 3;
+  const offset = (48 * 3 - hitboxSize) / 2;
+
+  const hitboxLeft = nextX + offset;
+  const hitboxRight = nextX + offset + hitboxSize;
+  const hitboxTop = nextY + offset;
+  const hitboxBottom = nextY + offset + hitboxSize;
+
+    // Calculate which tile(s) the hitbox would be over
+  const tilemapRect = mapContainer.getBoundingClientRect();
+  const mapLeft = tilemapRect.left + window.scrollX;
+  const mapTop = tilemapRect.top + window.scrollY;
+
+  // Convert hitbox position to tile coordinates
+  const tileX = Math.floor((hitboxLeft - mapLeft) / (tileSize * 3));
+  const tileY = Math.floor((hitboxTop - mapTop) / (tileSize * 3));
+
+  const hitboxTiles = Math.ceil(hitboxSize / (tileSize * 3));
+
+  // Check all four corners of the hitbox
+  const corners = [
+    [tileX, tileY],
+    [tileX + Math.floor(hitboxSize / (tileSize * 3)), tileY],
+    [tileX, tileY + Math.floor(hitboxSize / (tileSize * 3))],
+    [tileX + Math.floor(hitboxSize / (tileSize * 3)), tileY + Math.floor(hitboxSize / (tileSize * 3))]
+  ];
+
+  for (let [cx, cy] of corners) {
+    if (
+      cy < 0 || cy >= baseMap.length ||
+      cx < 0 || cx >= baseMap[0].length)
+      { return true; } // Out of bounds is solid
+    if (
+      solidTiles.includes(baseMap[cy][cx])
+    ) {
+      return true; // Collision detected
+    }
+  }
+  return false;
+}
+
 function updatePosition() {
 
   const moveDir = getMovementDirection();
 
+  let nextX = x;
+  let nextY = y;
+
   if (moveDir) {
     switch (moveDir) {
       case 'up':
-        y -= speed;
+        nextY -= speed;
         break;
       case 'down':
-        y += speed;
+        nextY += speed;
         break;
       case 'left':
-        x -= speed;
+        nextX -= speed;
         break;
       case 'right':
-        x += speed;
+        nextX += speed;
         break;
     }
+    lastDirectionRow = moveDir;
+  }
+
+  if (!isColliding(nextX, nextY)) {
+    x = nextX;
+    y = nextY;
     lastDirectionRow = moveDir;
   }
     
