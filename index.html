@@ -10,9 +10,25 @@
 <body>
 
 
-
+  <div id='game-container'>
     <div id="game">
       <h1 id="daytracker">Day 1</h1>
+
+      <div id="status">
+        <img src="status.png" id="status_img" alt="status">
+      </div>
+
+      <div id="status" style="height: 150px; width: 150px; top: 45px; right: 77px;">
+        <div id="status_text" style="z-index: 10;">
+          <p id="health">HEALTH: 50</p>
+          <p id="animals">ANIMALS: 50</p>
+          <p id="crops">PLANTS: 50</p>
+        </div>
+      </div>
+
+      <div id="water-count">
+        <p id="water">Water: 6</p>
+      </div>
 
       <div id="tilemap">   
         <div class="tile-layer soil-layer"></div>  
@@ -27,23 +43,26 @@
 
       <div id="player">
         <div id="hitbox"></div>
+        <div id="action-box" style="display: none;"></div>
       </div>
-    </div>
 
-    <div id="mobile-controls" style="display: none;">
-      <div class="control-row">
-        <button id="up-btn"><i class="fa fa-caret-up" style="font-size:32px"></i></button>
+        <div id="mobile-controls" style="display: none;">
+          <div class="control-row">
+            <button id="up-btn"><i class="fa fa-caret-up" style="font-size:32px"></i></button>
 
-        <button id="left-btn"><i class="fa fa-caret-left" style="font-size:32px"></i></button>
+            <button id="left-btn"><i class="fa fa-caret-left" style="font-size:32px"></i></button>
 
-        <button id="down-btn"><i class="fa fa-caret-down" style="font-size:32px"></i></button>
+            <button id="down-btn"><i class="fa fa-caret-down" style="font-size:32px"></i></button>
 
-        <button id="right-btn"><i class="fa fa-caret-right" style="font-size:32px"></i></button>
+            <button id="right-btn"><i class="fa fa-caret-right" style="font-size:32px"></i></button>
+          </div>
+        </div>
+
       </div>
     </div>
 
       <footer>
-      <img id="cw_logo" src="img/cw_logo_horizontal.png" alt="Background Image">
+      <img id="cw_logo" src="img/cw_logo_horizontal.png" alt="cw_logo">
       <p>Developed by <a href="https://charitywater.org" target="_blank">charity: water</a> | 
       Art by <a href="https://twitter.com/Cup_Nooble_" target="_blank">CUP NOOBLE</a> | 
       Code by <a href="mt.vu555@gmail.com" target="_blank">MAI</a></p></footer>

@@ -1,6 +1,7 @@
 // Log a message to the console to ensure the script is linked correctly
 console.log('JavaScript file is linked correctly.');
 
+const actionbox = document.getElementById('action-box');
 
 
 const player = document.getElementById('player');
@@ -278,6 +279,154 @@ wellMap.forEach(row => {
 }
 )
 
+//game state
+let day = 1;
+let health = 50;
+let crops = 50;
+let animals = 50;
+let wateravalible = 6;
+
+let actionsDone = {
+  drink: false,
+  waterCrops: false,
+  feedAnimals: false,
+}
+
+const dayE1 = document.getElementById('daytracker');
+const waterE1 = document.getElementById('water');
+const healthE1 = document.getElementById('health');
+const cropsE1 = document.getElementById('crops');
+const animalsE1 = document.getElementById('animals');
+
+let currentAction = null;
+
+//action box popup
+
+function updateStatus()
+{
+  for (const action in actionsDone)
+  {
+    console.log('hey');
+    if (!actionsDone[action]) {
+      
+      switch (action)
+      {
+        case 'waterCrops':
+          crops -= 10;
+          break;
+        case 'drink':
+          health -= 10;
+          break;
+        case 'feedAnimals':
+          animals -= 10;
+          break;
+      }
+    }
+  }
+
+
+  wateravalible = 6;
+
+  dayE1.textContent = 'DAY ' + day;
+  healthE1.textContent = 'HEALTH: ' + health;
+  cropsE1.textContent = 'PLANTS: ' + crops;
+  animalsE1.textContent = 'ANIMALS: ' + animals;
+
+}
+
+let eKeyPressed = false;
+let actionOn = false;
+
+function triggerAction(message) {
+  actionbox.style.display = 'block';
+  actionbox.textContent = message;
+  actionOn = true;  
+}
+
+function performAction()
+{
+  eKeyPressed = true;
+
+    switch(currentAction) {
+      case 'crops': 
+      if((wateravalible - 3) < 0 || actionsDone[1])
+      {
+        return;
+      }
+      
+      crops += 10;
+      actionsDone[1] = true;
+      wateravalible -= 3;
+      currentAction = null;
+      break;
+
+      case 'water': 
+      if((wateravalible - 2) < 0 || actionsDone[0])
+      {
+        return;
+      }
+      health += 10;
+      actionsDone[0] = true;
+      wateravalible -= 2;
+      currentAction = null;
+      break;
+
+      case 'animals': 
+      if((wateravalible - 3) < 0 || actionsDone[2])
+      {
+        return;
+      }
+      animals += 10;
+      actionsDone[2] = true;
+      wateravalible -= 3;
+      currentAction = null;
+      break;
+
+      case 'sleep':
+      currentAction = null;
+      day++;
+      updateStatus();
+      break;
+    }
+
+    waterE1.textContent = 'WATER: ' + wateravalible;
+  }
+
+
+document.addEventListener('keydown', function(event) {
+  if(event.key == 'e' || event.key == 'E' && !eKeyPressed && actionOn)
+  {
+    performAction();
+  }
+  });
+
+  document.addEventListener('click', () => {
+  {
+    if(!eKeyPressed && actionOn)
+    {
+      eKeyPressed = true;
+      performAction();
+    }
+  }
+  });
+
+  document.addEventListener('touchend', () => {
+    eKeyPressed = false;
+  });
+
+document.addEventListener('keyup', function(event) {
+  if(event.key == 'e' || event.key == 'E')
+  {
+    eKeyPressed = false;
+  }
+});
+
+function endTrigger(){
+  actionbox.style.display = 'none';
+  actionOn = false;
+}
+
+//keyboard input
 
 const keys = {
     up: false,
@@ -388,6 +537,7 @@ const fenceTiles = [1,3,4,7,11, 25,35, 23];
 const houseTiles = [0, 1, 2, 5, 7, 10, 11, 12, 21, 23];
 const furnitureTiles = [11, 19, 30, 22, 23, 24];
 const wellTiles = [0,1,2,3];
+const gardenTiles = [-2];
 
 function isColliding(nextX, nextY) {
 
@@ -416,11 +566,16 @@ function isColliding(nextX, nextY) {
     [tileX + Math.floor(hitboxSize / (tileSize * 3)), tileY + Math.floor(hitboxSize / (tileSize * 3))]
   ];
 
+  let isBlocked = false;
+  let actionTriggered = false;
+
   for (let [cx, cy] of corners) {
     if (
       cy < 0 || cy >= baseMap.length ||
       cx < 0 || cx >= baseMap[0].length)
-      { return true; } // Out of bounds is solid
+      { isBlocked = true;
+        continue;
+      } // Out of bounds is solid
     if (
       solidTiles.includes(baseMap[cy][cx])
     )
@@ -429,22 +584,43 @@ function isColliding(nextX, nextY) {
     }
     if (fenceTiles.includes(fenceMap[cy][cx]))
     {
-      return true;
+      currentAction = 'animals';
+      triggerAction( '[E] Feed Animals? 3 💧');
+      actionTriggered = true;
+      isBlocked = true;
     }
     if( houseTiles.includes(houseMap[cy][cx] ))
     {
-      return true;
+      isBlocked = true;
     }
     if( furnitureTiles.includes(furnitureMap[cy][cx] ))
     {
-      return true;
+      if (furnitureMap[cy][cx] == 19)
+      {
+        currentAction = 'sleep';
+        triggerAction('[E] Sleep?');
+        actionTriggered = true;
+        isBlocked = true;
+      }
+      isBlocked = true;
     }
     if( wellTiles.includes(wellMap[cy][cx] ))
     {
-      return true;
+      currentAction = 'water';
+      triggerAction('[E] Drink Water? 2 💧');
+      actionTriggered = true;
+      isBlocked = true;
+    }
+    if( gardenTiles.includes(grassMap[cy][cx]))
+    {
+      currentAction = 'crops';
+      triggerAction('[E] Water Crops? 3 💧')
+      actionTriggered = true;
     }
   }
-  return false;
+  if (!actionTriggered) endTrigger();
+  
+  return isBlocked;
 }
 
 function updatePosition() {
@@ -475,7 +651,6 @@ function updatePosition() {
   if (!isColliding(nextX, nextY)) {
     x = nextX;
     y = nextY;
-    lastDirectionRow = moveDir;
   }
     
     // Ensure the player stays within the bounds of the window
