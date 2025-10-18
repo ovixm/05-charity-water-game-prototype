@@ -7,8 +7,6 @@ This first version should focus on core functionality — clickable elements, sc
 - Add Plants
   - Watering Animation
 - Add Fade after Sleep
-- Correct Point System
-- Add Random Water Count
 - Add Random Events
 
 - Add Barrel?

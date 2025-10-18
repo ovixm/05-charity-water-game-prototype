@@ -302,17 +302,20 @@ const animalsE1 = document.getElementById('animals');
 
 let currentAction = null;
 
+let min = 5;
+let max = 6;
+
+let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
+
 //action box popup
 
 function updateStatus()
 {
-  for (const action in actionsDone)
-  {
-    console.log('hey');
-    if (!actionsDone[action]) {
-      
-      switch (action)
-      {
+  // For each action, if it was NOT done, apply the penalty.
+  // Then reset the flag so the next day starts fresh.
+  for (const key of Object.keys(actionsDone)) {
+    if (!actionsDone[key]) {
+      switch (key) {
         case 'waterCrops':
           crops -= 10;
           break;
@@ -324,12 +327,13 @@ function updateStatus()
           break;
       }
     }
-
-    actionsDone[action] = false;
+    // Reset for next day
+    actionsDone[key] = false;
   }
 
+  randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
 
-  wateravalible = 6;
+  wateravalible = randomInt;
 
   dayE1.textContent = 'DAY ' + day;
   healthE1.textContent = 'HEALTH: ' + health;
@@ -352,45 +356,42 @@ function performAction()
   eKeyPressed = true;
 
     switch(currentAction) {
-      case 'crops': 
-      if((wateravalible - 3) < 0 || actionsDone[1])
-      {
-        return;
-      }
-      
-      crops += 10;
-      actionsDone[1] = true;
-      wateravalible -= 3;
-      currentAction = null;
-      break;
+      case 'crops':
+        if ((wateravalible - 3) < 0 || actionsDone.waterCrops) {
+          return;
+        }
+        crops += 10;
+        actionsDone.waterCrops = true;
+        wateravalible -= 3;
+        currentAction = null;
+        break;
 
-      case 'water': 
-      if((wateravalible - 2) < 0 || actionsDone[0])
-      {
-        return;
-      }
-      health += 10;
-      actionsDone[0] = true;
-      wateravalible -= 2;
-      currentAction = null;
-      break;
+      case 'water':
+        if ((wateravalible - 2) < 0 || actionsDone.drink) {
+          return;
+        }
+        health += 10;
+        actionsDone.drink = true;
+        wateravalible -= 2;
+        currentAction = null;
+        break;
 
       case 'animals': 
-      if((wateravalible - 3) < 0 || actionsDone[2])
-      {
-        return;
-      }
-      startFeedingCow();
-      animals += 10;
-      actionsDone[2] = true;
-      wateravalible -= 3;
-      currentAction = null;
+        if((wateravalible - 3) < 0 || actionsDone[2])
+        {
+          return;
+        }
+        startFeedingCow();
+        animals += 10;
+        actionsDone.feedAnimals = true;
+        wateravalible -= 3;
+        currentAction = null;
       break;
 
       case 'sleep':
-      currentAction = null;
-      day++;
-      updateStatus();
+        currentAction = null;
+        day++;
+        updateStatus();
       break;
     }
 
