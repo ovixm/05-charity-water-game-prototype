@@ -8,8 +8,6 @@ This first version should focus on core functionality — clickable elements, sc
 - Add Fade after Sleep
 - Add Random Events
 
-- Add Barrel?
-- Add Evaporation
 - Add Starting Screen
 - Add Game Over
   - Add Restart

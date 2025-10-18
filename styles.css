@@ -182,7 +182,27 @@ footer {
   transform: scale(3);
   transform-origin: top left;
 
-  z-index: 3;
+  z-index: 10000;
+}
+
+#barrel {
+  display: block;
+  width: 48px;
+  height: 48px;
+  background-image: url('barrel.png');
+  background-size: 96px 48px; /* 2 columns, 1 row */
+  background-repeat: no-repeat;
+  background-position: -48px 0;
+  position: absolute;
+  top: 230px;
+  left: 0px;
+  box-sizing: content-box;
+  image-rendering: pixelated;
+
+  transform: scale(3);
+  transform-origin: top left;
+
+  z-index: 16;
 }
 
 #cow {

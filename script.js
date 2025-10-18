@@ -214,7 +214,7 @@ const furnitureMap = [
   [-1, -1, 6, 6, 6, 6, 6, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, 6, 6, 6, 6, 6, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, 52, 53, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, -3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -287,6 +287,7 @@ let health = 50;
 let crops = 50;
 let animals = 50;
 let wateravalible = 6;
+let barrelBuilt = false;
 
 let actionsDone = {
   drink: false,
@@ -333,7 +334,13 @@ function updateStatus()
 
   randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
 
-  wateravalible = randomInt;
+  if(barrelBuilt) {
+    document.getElementById('barrel').style.backgroundPosition = `0 0`;
+    wateravalible = randomInt;
+  } 
+  else {
+    wateravalible = randomInt - 1;
+  }
 
   dayE1.textContent = 'DAY ' + day;
   healthE1.textContent = 'HEALTH: ' + health;
@@ -382,7 +389,6 @@ function performAction()
         {
           return;
         }
-        console.log("Starting feeding action");
         startFeedingCow();
         animals += 10;
         actionsDone.feedAnimals = true;
@@ -394,6 +400,16 @@ function performAction()
         currentAction = null;
         day++;
         updateStatus();
+      break;
+
+      case 'barrel':
+        if((wateravalible - 4) < 0 || barrelBuilt)
+        {
+          return;
+        }
+        barrelBuilt = true;
+        wateravalible -=4;
+        currentAction = null;
       break;
     }
 
@@ -577,7 +593,7 @@ function updateSprite(isIdle) {
 const solidTiles = [0, 2, 11, 13, 16, 17, 23, 24, 44];
 const fenceTiles = [1,3,4,7,11, 25,35, 23];
 const houseTiles = [0, 1, 2, 5, 7, 10, 11, 12, 21, 23];
-const furnitureTiles = [11, 19, 30, 22, 23, 24];
+const furnitureTiles = [11, 19, 30, 22, 23, 24, -3];
 const wellTiles = [0,1,2,3];
 const gardenTiles = [-2];
 
@@ -643,6 +659,14 @@ function isColliding(nextX, nextY) {
         triggerAction('[E] Sleep?');
         actionTriggered = true;
         isBlocked = true;
+      }
+
+      if (furnitureMap[cy][cx] == -3) {
+        currentAction = 'barrel';
+        if(!barrelBuilt) {
+        triggerAction('[E] Build Barrel?');
+        }
+        actionTriggered = true;
       }
       isBlocked = true;
     }
