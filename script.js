@@ -360,6 +360,7 @@ function performAction()
         if ((wateravalible - 3) < 0 || actionsDone.waterCrops) {
           return;
         }
+        startWatering();
         crops += 10;
         actionsDone.waterCrops = true;
         wateravalible -= 3;
@@ -377,10 +378,11 @@ function performAction()
         break;
 
       case 'animals': 
-        if((wateravalible - 3) < 0 || actionsDone[2])
+        if((wateravalible - 3) < 0 || actionsDone.feedAnimals)
         {
           return;
         }
+        console.log("Starting feeding action");
         startFeedingCow();
         animals += 10;
         actionsDone.feedAnimals = true;
@@ -527,7 +529,7 @@ function directionToRow(direction, isIdle = false) {
     'left': isIdle ? 3 : 7,
     'right': isIdle ? 2 : 6,
     'up': isIdle ? 1 : 5
-  };
+  };  
   return directionMap[direction] || 0;
 }
 
@@ -542,6 +544,17 @@ function updateDirection() {
   }
 }
 
+//watering plants
+let isWatering = false;
+
+function startWatering() {
+  console.log("Watering started");
+    isWatering = true;
+    setTimeout(() => {
+        isWatering = false;
+    }, 3000); // Watering animation lasts for 3 seconds
+}
+
 function updateSprite(isIdle) {
     frameTick++;
     if (frameTick >= ticksPerFrame) {
@@ -550,7 +563,12 @@ function updateSprite(isIdle) {
     }
   
 
-  const row = directionToRow(lastDirectionRow, isIdle);
+  let row = directionToRow(lastDirectionRow, isIdle);
+  console.log(isWatering);
+  if (isWatering) {
+    startWatering();
+    row = (directionToRow(lastDirectionRow, isIdle) % 4) + 20; // Assuming rows 20-23 are the watering animation rows
+  }
   const bgX = -currentFrame * frameWidth;
   const bgY = -row * frameHeight;
   player.style.backgroundPosition = `${bgX}px ${bgY}px`;
@@ -651,8 +669,12 @@ function isColliding(nextX, nextY) {
 
 function updatePosition() {
 
-  const moveDir = getMovementDirection();
+  let moveDir = getMovementDirection();
 
+  if (isWatering) {
+    moveDir = null; // Prevent movement while watering
+  }
+  
   let nextX = x;
   let nextY = y;
 
@@ -689,6 +711,8 @@ function updatePosition() {
     return !!moveDir;
 }
 
+
+//feeding cow animation
 const cow = document.getElementById('cow');
 let frameWidthCow = 32; // Width of a single frame in the sprite sheet
 let frameHeightCow = 32; // Height of a single frame in the sprite sheet
