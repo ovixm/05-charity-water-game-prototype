@@ -5,6 +5,7 @@ const actionbox = document.getElementById('action-box');
 
 let scalingFactor = 3; // Initial scaling factor
 
+let started = false;
 
 const player = document.getElementById('player');
 const speed = 2;
@@ -25,6 +26,73 @@ const fenceLayer = document.querySelector('.fence-layer');
 const houseLayer = document.querySelector('.house-layer');
 const furnitureLayer = document.querySelector('.furniture-layer');
 const wellLayer = document.querySelector('.well-layer');
+
+
+const startBtn = document.getElementById('start-game-btn');
+if (startBtn) {
+  startBtn.addEventListener('click', () => {
+    const tutorial = document.getElementById('tutorial-screen');
+    if (tutorial) {
+      tutorial.style.display = 'none';
+    }
+    started = true;
+  });
+}
+
+const button = document.getElementById('start-game-btn');
+
+button.addEventListener('mousedown', () => {
+  button.src = "start-button-down.png";
+});
+
+button.addEventListener('mouseup', () => {
+  button.src = "start-button.png";
+});
+
+button.addEventListener('mouseleave', () => {
+  button.src = "start-button.png";
+});
+
+button.addEventListener('touchstart', () => {
+  button.src = "start-button-down.png";
+});
+
+button.addEventListener('touchend', () => {
+  button.src = "start-button.png";
+});
+
+let currentDifficulty = 'Normal';
+
+const easySwitch = document.getElementById('easy-game-btn');
+const normalSwitch = document.getElementById('normal-game-btn');
+const hardSwitch = document.getElementById('hard-game-btn');
+
+function setDifficulty(difficulty) {
+  currentDifficulty = difficulty;
+
+  easySwitch.src = currentDifficulty === 'Easy' ? "switch-on.png" : "switch-off.png";
+  normalSwitch.src = currentDifficulty === 'Normal' ? "switch-on.png" : "switch-off.png";
+  hardSwitch.src = currentDifficulty === 'Hard' ? "switch-on.png" : "switch-off.png";
+}
+
+easySwitch.addEventListener('click', () => setDifficulty('Easy'));
+easySwitch.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  setDifficulty('Easy');
+});
+
+normalSwitch.addEventListener('click', () => setDifficulty('Normal'));
+normalSwitch.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  setDifficulty('Normal');
+});
+
+
+hardSwitch.addEventListener('click', () => setDifficulty('Hard'));
+hardSwitch.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  setDifficulty('Hard');
+});
 
 
 // Tile indices based on the tileset image
@@ -748,7 +816,7 @@ function updatePosition() {
 
   let moveDir = getMovementDirection();
 
-  if (isWatering) {
+  if (isWatering || !started || isSleeping) {
     moveDir = null; // Prevent movement while watering
   }
   
@@ -853,9 +921,12 @@ function gameLoop() {
   }
 
   const isMoving = updatePosition();
-  updateSprite(!isMoving);
-  updateCow();
-  updatePlant();
+
+  if(started) {
+    updateSprite(!isMoving);
+    updateCow();
+    updatePlant();
+  }
   requestAnimationFrame(gameLoop);
 }
 
