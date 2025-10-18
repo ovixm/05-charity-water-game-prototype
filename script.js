@@ -380,6 +380,7 @@ function performAction()
       {
         return;
       }
+      startFeedingCow();
       animals += 10;
       actionsDone[2] = true;
       wateravalible -= 3;
@@ -687,6 +688,44 @@ function updatePosition() {
     return !!moveDir;
 }
 
+const cow = document.getElementById('cow');
+let frameWidthCow = 32; // Width of a single frame in the sprite sheet
+let frameHeightCow = 32; // Height of a single frame in the sprite sheet
+const totalFramesCow = 6; // Total number of frames in the sprite sheet
+let currentFrameCow = 0;
+let frameTickCow = 0; // To control the speed of animation
+const ticksPerFrameCow = 12; // Number of update calls before switching to the next frame
+let isFeedingCow = false;
+
+function startFeedingCow() {
+    isFeedingCow = true;
+    setTimeout(() => {
+        isFeedingCow = false;
+    }, 3000); // Feeding animation lasts for 3 seconds
+}
+
+function updateCow() {
+    frameTickCow++;
+    if (frameTickCow >= ticksPerFrameCow) {
+      currentFrameCow = (currentFrameCow + 1) % totalFramesCow;
+      frameTickCow = 0;
+    }
+  
+
+  let row = 0;
+
+  if(isFeedingCow) {
+    row = 1; // Feeding animation row
+  }
+  else {
+    row = 0; // Idle animation row
+  }
+
+  const bgX = -currentFrameCow * frameWidthCow;
+  const bgY = -row * frameHeightCow;
+  cow.style.backgroundPosition = `${bgX}px ${bgY}px`;
+}
+
 function gameLoop() {
 
   if(window.innerWidth > 1100)
@@ -713,6 +752,7 @@ function gameLoop() {
 
   const isMoving = updatePosition();
   updateSprite(!isMoving);
+  updateCow();
   requestAnimationFrame(gameLoop);
 }
 

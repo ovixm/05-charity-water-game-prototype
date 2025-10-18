@@ -185,6 +185,26 @@ footer {
   z-index: 3;
 }
 
+#cow {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-image: url('cow.png');
+  background-size: 192px 64px; /* 6 columns, 2 rows */
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  position: absolute;
+  top: 400px;
+  left: 200px;
+  box-sizing: content-box;
+  image-rendering: pixelated;
+
+  transform: scale(3);
+  transform-origin: top left;
+
+  z-index: 16;
+}
+
 
 
 #hitbox {
@@ -210,7 +230,7 @@ footer {
 
   font-size: 4px;
 
-  z-index: 4;
+  z-index: 16;
 }
 
 /* Responsive tilemap */
