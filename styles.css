@@ -185,6 +185,51 @@ footer {
   z-index: 10000;
 }
 
+#fade-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 20000;
+}
+
+/* Fade to black (visible) */
+#fade-screen.fade-out {
+  opacity: 1;
+  pointer-events: auto; /* block input while screen is black */
+}
+
+/* Fade back to transparent */
+#fade-screen.fade-in {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#plants {
+  display: block;
+  width: 48px;
+  height: 64px;
+  background-image: url('Farming Plants.png');
+  background-size: 240px 64px; /* 5 columns, 1 row */
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  position: absolute;
+  top: 200px;
+  left: 723px;
+  box-sizing: content-box;
+  image-rendering: pixelated;
+
+  transform: scale(3);
+  transform-origin: top left;
+
+  z-index: 16;
+}
+
 #barrel {
   display: block;
   width: 48px;

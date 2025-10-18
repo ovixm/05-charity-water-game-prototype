@@ -289,6 +289,8 @@ let animals = 50;
 let wateravalible = 6;
 let barrelBuilt = false;
 
+let isSleeping = false;
+
 let actionsDone = {
   drink: false,
   waterCrops: false,
@@ -310,10 +312,58 @@ let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
 
 //action box popup
 
+const plant = document.getElementById('plants');
+let currentFramePlant = 0;
+
+let grown = false;
+
+function updatePlant() {
+  if (isSleeping && actionsDone.waterCrops) 
+  {
+    if((day == 1 || day == 3 || day == 5 || day == 7) && !grown) {
+      currentFramePlant++;
+      grown = true;
+    }
+  }
+  
+  const bgX = -currentFramePlant * 48;
+  plant.style.backgroundPosition = `${bgX}px 0`;
+}
+
+const SLEEP_MS = 3000;
+const FADE_MS = 500;  
+
+function startSleeping() {
+  if (isSleeping) return;
+  isSleeping = true;
+  setTimeout(() => {
+      isSleeping = false;
+      grown = false;
+  }, SLEEP_MS);
+}
+
+function triggerDayFade() {
+  const fadeScreen = document.getElementById('fade-screen');
+  if (!fadeScreen) return;
+
+  const holdMs = Math.max(0, SLEEP_MS - FADE_MS * 2);
+
+  fadeScreen.classList.add("fade-out");
+
+  setTimeout(() => {
+    fadeScreen.classList.remove("fade-out");
+    fadeScreen.classList.add("fade-in");
+
+    setTimeout(() => {
+      fadeScreen.classList.remove("fade-in");
+    }, FADE_MS);
+
+  }, FADE_MS + holdMs);
+}
+    
+
 function updateStatus()
 {
-  // For each action, if it was NOT done, apply the penalty.
-  // Then reset the flag so the next day starts fresh.
   for (const key of Object.keys(actionsDone)) {
     if (!actionsDone[key]) {
       switch (key) {
@@ -328,7 +378,6 @@ function updateStatus()
           break;
       }
     }
-    // Reset for next day
     actionsDone[key] = false;
   }
 
@@ -397,9 +446,15 @@ function performAction()
       break;
 
       case 'sleep':
+        // Start sleeping now and schedule end-of-day after the sleep duration.
         currentAction = null;
-        day++;
-        updateStatus();
+        triggerDayFade();
+        startSleeping();
+        // Wait for the same duration as startSleeping before advancing day and applying updateStatus
+        setTimeout(() => {
+          day++;
+          updateStatus();
+        }, SLEEP_MS);
       break;
 
       case 'barrel':
@@ -564,7 +619,6 @@ function updateDirection() {
 let isWatering = false;
 
 function startWatering() {
-  console.log("Watering started");
     isWatering = true;
     setTimeout(() => {
         isWatering = false;
@@ -580,7 +634,6 @@ function updateSprite(isIdle) {
   
 
   let row = directionToRow(lastDirectionRow, isIdle);
-  console.log(isWatering);
   if (isWatering) {
     startWatering();
     row = (directionToRow(lastDirectionRow, isIdle) % 4) + 20; // Assuming rows 20-23 are the watering animation rows
@@ -802,6 +855,7 @@ function gameLoop() {
   const isMoving = updatePosition();
   updateSprite(!isMoving);
   updateCow();
+  updatePlant();
   requestAnimationFrame(gameLoop);
 }
 
