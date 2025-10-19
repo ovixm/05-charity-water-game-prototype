@@ -368,7 +368,7 @@ wellMap.forEach(row => {
 )
 
 
-let day = 6;
+let day = 1;
 let health = 50;
 let crops = 50;
 let animals = 50;
@@ -400,6 +400,7 @@ let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
 
 const plant = document.getElementById('plants');
 let currentFramePlant = 0;
+let frameWidthPlant = 48;
 
 let grown = false;
 
@@ -412,7 +413,7 @@ function updatePlant() {
     }
   }
   
-  const bgX = -currentFramePlant * 48;
+  const bgX = -currentFramePlant * frameWidthPlant;
   plant.style.backgroundPosition = `${bgX}px 0`;
 }
 
@@ -1153,6 +1154,7 @@ function gameLoop() {
     frameWidth = 16 * scalingFactor;
     frameHeightCow = 32;
     frameWidthCow = 32;
+    frameWidthPlant = 48;
     tileSize = 16;
   }
   else if(window.innerWidth > 800)
@@ -1162,6 +1164,7 @@ function gameLoop() {
     frameWidth = 48 * scalingFactor;
     frameHeightCow = 24;
     frameWidthCow = 24;
+    frameWidthPlant = 32;
     tileSize = 10.67;
   }
   else
@@ -1171,6 +1174,7 @@ function gameLoop() {
     frameWidth = 48 * scalingFactor;
     frameHeightCow = 16;
     frameWidthCow = 16;
+    frameWidthPlant = 24;
     tileSize = 8;
   }
 

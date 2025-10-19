@@ -290,8 +290,8 @@ footer {
   background-repeat: no-repeat;
   background-position: 0 0;
   position: absolute;
-  top: 200px;
-  left: 723px;
+  top: 30%;
+  left: 75%;
   box-sizing: content-box;
   image-rendering: pixelated;
 
@@ -533,9 +533,9 @@ footer {
   }
 
   #plants {
-    width: 48px;
-    height: 64px;
-    background-size: 240px 64px;
+    width: 32px;
+    height: 42.67px;
+    background-size: 160px 42.67px;
   }
 
   .fence-layer .tile {
@@ -587,6 +587,12 @@ footer {
     height: 16px;
     background-size: 96px 32px;
     transform: scale(3);
+  }
+
+    #plants {
+    width: 24px;
+    height: 32px;
+    background-size: 120px 32px;
   }
 
   #barrel {
