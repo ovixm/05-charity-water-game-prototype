@@ -261,7 +261,7 @@ footer {
   left: 0;
   width: 100%;
   height: calc(100vh - 70px);
-  background: url("night-sky.jpg");
+  background-color: #FFC907;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease;
@@ -651,4 +651,74 @@ body, html {
     height: 20px;
   }
 }
+}
+
+
+/* Game Over Overlay */
+#game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none; /* shown when game over */
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 100000; /* above everything */
+}
+
+#game-over-overlay[aria-hidden="false"] {
+  display: flex;
+}
+
+#game-over-panel {
+  background: #fff;
+  color: #222;
+  padding: 28px;
+  border-radius: 12px;
+  width: min(520px, 90%);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  text-align: center;
+}
+
+#game-over-title {
+  margin: 0 0 8px 0;
+  font-size: 36px;
+  color: #F5402C; /* red accent */
+}
+
+#game-over-reason {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+}
+
+#game-over-stats p {
+  margin: 6px 0;
+  font-weight: bold;
+}
+
+#game-over-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+#game-over-actions button {
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#restart-btn {
+  background: #2E9DF7;
+  color: white;
+}
+
+#menu-btn {
+  background: #FFC907;
+  color: #222;
 }

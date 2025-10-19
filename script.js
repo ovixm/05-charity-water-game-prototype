@@ -467,6 +467,8 @@ function updateStatus()
   cropsE1.textContent = 'PLANTS: ' + crops;
   animalsE1.textContent = 'ANIMALS: ' + animals;
 
+  // check immediately after status updates
+  checkGameOver();
 }
 
 let eKeyPressed = false;
@@ -935,7 +937,119 @@ function switchDifficulty() {
 }
   
 
+// new: global game over flag
+let gameOver = false;
+
+function checkGameOver() {
+	if (health <= 0 || crops <= 0 || animals <= 0) {
+		console.log(`Game Over! health=${health}, crops=${crops}, animals=${animals}`);
+		gameOver = true;
+		showGameOver();
+		return true;
+	}
+	return false;
+}
+
+// Show game over overlay and populate stats/reason
+function showGameOver() {
+  const overlay = document.getElementById('game-over-overlay');
+  const title = document.getElementById('game-over-title');
+  const reason = document.getElementById('game-over-reason');
+  const finalDay = document.getElementById('final-day');
+  const finalWater = document.getElementById('final-water');
+
+  if (!overlay) return;
+
+  // Determine reason
+  let r = 'You ran out of resources.';
+  if (health <= 0) r = 'Your health reached 0.';
+  else if (crops <= 0) r = 'Your plants died.';
+  else if (animals <= 0) r = 'Your animals died.';
+
+  reason.textContent = r;
+  finalDay.textContent = 'Day: ' + day;
+  finalWater.textContent = 'Water: ' + wateravalible;
+
+  overlay.setAttribute('aria-hidden', 'false');
+
+  // pause the main loop by setting gameOver flag (already done) and remove input
+  // Optionally add a visual fade
+  const fade = document.getElementById('fade-screen');
+  if (fade) fade.classList.add('fade-out');
+
+  // Attach button handlers (idempotent)
+  const restart = document.getElementById('restart-btn');
+  const menu = document.getElementById('menu-btn');
+
+  if (restart) {
+    restart.onclick = () => {
+      hideGameOver();
+      restartGame();
+    };
+  }
+
+  if (menu) {
+    menu.onclick = () => {
+      hideGameOver();
+      // show the tutorial/main menu screen
+      const tutorial = document.getElementById('tutorial-screen');
+      if (tutorial) tutorial.style.display = 'block';
+      // reset to initial state
+      restartGame(true);
+    };
+  }
+}
+
+function hideGameOver() {
+  const overlay = document.getElementById('game-over-overlay');
+  if (!overlay) return;
+  overlay.setAttribute('aria-hidden', 'true');
+  const fade = document.getElementById('fade-screen');
+  if (fade) fade.classList.remove('fade-out');
+}
+
+// Reset game state to initial values. If toMenu is true, leave tutorial visible.
+function restartGame(toMenu = false) {
+  // simple reset of core game state
+  day = 1;
+  health = 50;
+  crops = 50;
+  animals = 50;
+  wateravalible = 6;
+  barrelBuilt = false;
+  isSleeping = false;
+  actionsDone = { drink: false, waterCrops: false, feedAnimals: false };
+  gameOver = false;
+  started = !toMenu; // if going to menu, don't start
+
+  // update UI elements
+  const dayE1 = document.getElementById('daytracker');
+  const waterE1 = document.getElementById('water');
+  const healthE1 = document.getElementById('health');
+  const cropsE1 = document.getElementById('crops');
+  const animalsE1 = document.getElementById('animals');
+
+  if (dayE1) dayE1.textContent = 'DAY ' + day;
+  if (waterE1) waterE1.textContent = 'WATER: ' + wateravalible;
+  if (healthE1) healthE1.textContent = 'HEALTH: ' + health;
+  if (cropsE1) cropsE1.textContent = 'PLANTS: ' + crops;
+  if (animalsE1) animalsE1.textContent = 'ANIMALS: ' + animals;
+
+  // reset visuals
+  const plantEl = document.getElementById('plants');
+  if (plantEl) {
+    plantEl.style.backgroundPosition = '0 0';
+  }
+  const barrelEl = document.getElementById('barrel');
+  if (barrelEl) barrelEl.style.backgroundPosition = '-48px 0';
+
+  // ensure loop restarts
+  if (!gameOver) requestAnimationFrame(gameLoop);
+}
+
 function gameLoop() {
+
+  if (gameOver) return;
 
   if(window.innerWidth > 1100)
   {
@@ -972,10 +1086,4 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-if(health > 0 && crops > 0 && animals > 0)
-{
-  gameLoop();
-}
-else {
-  console.log("Game Over! One of your stats has dropped to zero.");
-}
+gameLoop();

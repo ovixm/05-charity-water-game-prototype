@@ -82,6 +82,22 @@
     <p style="margin: 10px;">Developed by <a href="https://charitywater.org" target="_blank">charity: water</a>
   </footer>
 
+  <!-- Game Over Overlay -->
+  <div id="game-over-overlay" aria-hidden="true">
+    <div id="game-over-panel">
+      <h2 id="game-over-title">Game Over</h2>
+      <p id="game-over-reason">You ran out of resources.</p>
+      <div id="game-over-stats">
+        <p id="final-day">Day: 1</p>
+        <p id="final-water">Water: 0</p>
+      </div>
+      <div id="game-over-actions">
+        <button id="restart-btn">Restart</button>
+        <button id="menu-btn">Main Menu</button>
+      </div>
+    </div>
+  </div>
+
     <script src="script.js"></script>
 </body>
 </html>
