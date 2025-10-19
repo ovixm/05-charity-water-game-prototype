@@ -122,6 +122,19 @@ const baseMap = [
 
 let tileSize = 16;
 
+  if(window.innerWidth > 1100)
+  {
+    tileSize = 16;
+  }
+  else if(window.innerWidth > 800)
+  {
+    tileSize = 10.67;
+  }
+  else
+  {
+    tileSize = 8;
+  }
+
 // Find the center tile's row and column
 const mapRows = baseMap.length;
 const mapCols = baseMap[0].length;
@@ -737,6 +750,21 @@ const gardenTiles = [-2];
 function isColliding(nextX, nextY) {
 
   let hitboxSize = 16 * scalingFactor;
+
+  if(window.innerWidth > 1100)
+  {
+    hitboxSize = 16;
+  }
+  else if(window.innerWidth > 800)
+  {
+    hitboxSize = 10.67;
+  }
+  else
+  {
+    hitboxSize = 8;
+  }
+
+  hitboxSize = hitboxSize * scalingFactor;
   let offset = (48 * scalingFactor - hitboxSize) / 2;
 
   const hitboxLeft = nextX + offset;
@@ -1020,7 +1048,6 @@ function showWin() {
   
   const overlay = document.getElementById('congrats-screen');
   if (!overlay) {
-    console.warn('congrats-screen element not found.');
     return;
   }
 
@@ -1124,6 +1151,8 @@ function gameLoop() {
     scalingFactor = 3;
     frameHeight = 16 * scalingFactor;
     frameWidth = 16 * scalingFactor;
+    frameHeightCow = 32;
+    frameWidthCow = 32;
     tileSize = 16;
   }
   else if(window.innerWidth > 800)
@@ -1131,6 +1160,8 @@ function gameLoop() {
     scalingFactor = 2/3;
     frameHeight = 48 * scalingFactor;
     frameWidth = 48 * scalingFactor;
+    frameHeightCow = 24;
+    frameWidthCow = 24;
     tileSize = 10.67;
   }
   else
@@ -1138,6 +1169,8 @@ function gameLoop() {
     scalingFactor = 1/2;
     frameHeight = 48 * scalingFactor;
     frameWidth = 48 * scalingFactor;
+    frameHeightCow = 16;
+    frameWidthCow = 16;
     tileSize = 8;
   }
 
