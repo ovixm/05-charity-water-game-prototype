@@ -19,6 +19,8 @@ const ticksPerFrame = 6; // Number of update calls before switching to the next 
 let directionRow = 0; // Row in the sprite sheet for direction (0: down, 1: left, 2: right, 3: up)
 let lastDirectionRow = 0; // To remember the last direction for idle state
 
+let totalWaterUsed = 0;
+
 //tilemap
 const baseLayer = document.querySelector('.soil-layer');
 const grassLayer = document.querySelector('.grass-layer');
@@ -352,8 +354,8 @@ wellMap.forEach(row => {
 }
 )
 
-//game state
-let day = 1;
+
+let day = 6;
 let health = 50;
 let crops = 50;
 let animals = 50;
@@ -467,8 +469,13 @@ function updateStatus()
   cropsE1.textContent = 'PLANTS: ' + crops;
   animalsE1.textContent = 'ANIMALS: ' + animals;
 
-  // check immediately after status updates
+
   checkGameOver();
+
+
+  if (!gameOver && day > 7) {
+    showWin();
+  }
 }
 
 let eKeyPressed = false;
@@ -490,6 +497,7 @@ function performAction()
           return;
         }
         startWatering();
+        totalWaterUsed += 3;
         crops += 10;
         actionsDone.waterCrops = true;
         wateravalible -= 3;
@@ -501,6 +509,7 @@ function performAction()
           return;
         }
         health += 10;
+        totalWaterUsed += 2;
         actionsDone.drink = true;
         wateravalible -= 2;
         currentAction = null;
@@ -512,6 +521,7 @@ function performAction()
           return;
         }
         startFeedingCow();
+        totalWaterUsed += 3;
         animals += 10;
         actionsDone.feedAnimals = true;
         wateravalible -= 3;
@@ -519,11 +529,11 @@ function performAction()
       break;
 
       case 'sleep':
-        // Start sleeping now and schedule end-of-day after the sleep duration.
+
         currentAction = null;
         triggerDayFade();
         startSleeping();
-        // Wait for the same duration as startSleeping before advancing day and applying updateStatus
+
         setTimeout(() => {
           day++;
           updateStatus();
@@ -535,6 +545,7 @@ function performAction()
         {
           return;
         }
+        totalWaterUsed += 4;
         barrelBuilt = true;
         wateravalible -=4;
         currentAction = null;
@@ -935,32 +946,29 @@ function switchDifficulty() {
   switching = false;
 
 }
-  
 
-// new: global game over flag
+let gameWin = false;
+
+
 let gameOver = false;
 
 function checkGameOver() {
-	if (health <= 0 || crops <= 0 || animals <= 0) {
-		console.log(`Game Over! health=${health}, crops=${crops}, animals=${animals}`);
-		gameOver = true;
-		showGameOver();
-		return true;
-	}
-	return false;
+  if (health <= 0 || crops <= 0 || animals <= 0) {
+    gameOver = true;
+    showGameOver();
+    return true;
+  }
+  return false;
 }
 
-// Show game over overlay and populate stats/reason
 function showGameOver() {
   const overlay = document.getElementById('game-over-overlay');
-  const title = document.getElementById('game-over-title');
   const reason = document.getElementById('game-over-reason');
   const finalDay = document.getElementById('final-day');
   const finalWater = document.getElementById('final-water');
 
   if (!overlay) return;
 
-  // Determine reason
   let r = 'You ran out of resources.';
   if (health <= 0) r = 'Your health reached 0.';
   else if (crops <= 0) r = 'Your plants died.';
@@ -972,12 +980,11 @@ function showGameOver() {
 
   overlay.setAttribute('aria-hidden', 'false');
 
-  // pause the main loop by setting gameOver flag (already done) and remove input
-  // Optionally add a visual fade
+  
   const fade = document.getElementById('fade-screen');
   if (fade) fade.classList.add('fade-out');
 
-  // Attach button handlers (idempotent)
+  
   const restart = document.getElementById('restart-btn');
   const menu = document.getElementById('menu-btn');
 
@@ -991,10 +998,10 @@ function showGameOver() {
   if (menu) {
     menu.onclick = () => {
       hideGameOver();
-      // show the tutorial/main menu screen
+     
       const tutorial = document.getElementById('tutorial-screen');
       if (tutorial) tutorial.style.display = 'block';
-      // reset to initial state
+ 
       restartGame(true);
     };
   }
@@ -1008,9 +1015,64 @@ function hideGameOver() {
   if (fade) fade.classList.remove('fade-out');
 }
 
-// Reset game state to initial values. If toMenu is true, leave tutorial visible.
+
+function showWin() {
+  
+  const overlay = document.getElementById('congrats-screen');
+  if (!overlay) {
+    console.warn('congrats-screen element not found.');
+    return;
+  }
+
+  const title = document.getElementById('congrats-title');
+  const message = document.getElementById('congrats-message');
+  const totalWaterEl = document.getElementById('total-water-used');
+  const finalHealthEl = document.getElementById('final-health');
+
+  if (title) title.textContent = 'Congratulations!';
+  if (message) message.textContent = 'You successfully managed your farm for 7 days!';
+  if (totalWaterEl) totalWaterEl.textContent = `Total Water Used: ${totalWaterUsed}`;
+  if (finalHealthEl) finalHealthEl.textContent = `Final Health: ${health}`;
+
+  gameOver = true; 
+  started = false;
+
+  overlay.setAttribute('aria-hidden', 'false');
+
+  const fade = document.getElementById('fade-screen');
+  if (fade) fade.classList.add('fade-out');
+
+  
+  const restart = document.getElementById('restart-btn');
+  const menu = document.getElementById('menu-btn');
+
+  if (restart) {
+    restart.onclick = () => {
+      hideWin();
+      restartGame();
+    };
+  }
+
+  if (menu) {
+    menu.onclick = () => {
+      hideWin();
+      const tutorial = document.getElementById('tutorial-screen');
+      if (tutorial) tutorial.style.display = 'block';
+      restartGame(true);
+    };
+  }
+}
+
+function hideWin() {
+  const overlay = document.getElementById('congrats-screen');
+  if (!overlay) return;
+  overlay.setAttribute('aria-hidden', 'true');
+  const fade = document.getElementById('fade-screen');
+  if (fade) fade.classList.remove('fade-out');
+}
+
+
 function restartGame(toMenu = false) {
-  // simple reset of core game state
   day = 1;
   health = 50;
   crops = 50;
@@ -1020,9 +1082,11 @@ function restartGame(toMenu = false) {
   isSleeping = false;
   actionsDone = { drink: false, waterCrops: false, feedAnimals: false };
   gameOver = false;
-  started = !toMenu; // if going to menu, don't start
+  gameWin = false;
+  totalWaterUsed = 0;
+  started = !toMenu; 
 
-  // update UI elements
+
   const dayE1 = document.getElementById('daytracker');
   const waterE1 = document.getElementById('water');
   const healthE1 = document.getElementById('health');
@@ -1035,7 +1099,7 @@ function restartGame(toMenu = false) {
   if (cropsE1) cropsE1.textContent = 'PLANTS: ' + crops;
   if (animalsE1) animalsE1.textContent = 'ANIMALS: ' + animals;
 
-  // reset visuals
+
   const plantEl = document.getElementById('plants');
   if (plantEl) {
     plantEl.style.backgroundPosition = '0 0';
@@ -1043,12 +1107,16 @@ function restartGame(toMenu = false) {
   const barrelEl = document.getElementById('barrel');
   if (barrelEl) barrelEl.style.backgroundPosition = '-48px 0';
 
-  // ensure loop restarts
+  hideGameOver();
+  hideWin();
+
+
   if (!gameOver) requestAnimationFrame(gameLoop);
 }
 
 function gameLoop() {
 
+  if (gameWin) return;
   if (gameOver) return;
 
   if(window.innerWidth > 1100)

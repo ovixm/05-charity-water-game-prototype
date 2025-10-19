@@ -653,9 +653,7 @@ body, html {
 }
 }
 
-
-/* Game Over Overlay */
-#game-over-overlay {
+#congrats-screen {
   position: fixed;
   top: 0;
   left: 0;
@@ -666,6 +664,86 @@ body, html {
   align-items: center;
   background: rgba(0,0,0,0.6);
   z-index: 100000; /* above everything */
+}
+
+#congrats-screen[aria-hidden="false"] {
+  display: flex;
+}
+
+/* Congratulation panel styles: white box centered like the game-over panel */
+#congrats-panel {
+  background: #fff;
+  color: #222;
+  padding: 28px;
+  border-radius: 12px;
+  width: min(520px, 90%);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  text-align: center;
+}
+
+#congrats-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100001; 
+}
+
+#congrats-title {
+  margin: 0 0 8px 0;
+  font-size: 36px;
+  color: #159A48; /* dark green accent */
+}
+
+#congrats-message {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+}
+
+#congrats-stats p {
+  margin: 6px 0;
+  font-weight: bold;
+}
+
+#congrats-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+#congrats-actions button {
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#congrats-actions #restart-btn {
+  background: #2E9DF7;
+  color: white;
+}
+
+#congrats-actions #menu-btn {
+  background: #FFC907;
+  color: #222;
+}
+
+
+
+
+#game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 100000; 
 }
 
 #game-over-overlay[aria-hidden="false"] {
@@ -685,7 +763,7 @@ body, html {
 #game-over-title {
   margin: 0 0 8px 0;
   font-size: 36px;
-  color: #F5402C; /* red accent */
+  color: #F5402C;
 }
 
 #game-over-reason {

@@ -76,14 +76,23 @@
 
   </div>
 
+  <div id="congrats-screen" aria-hidden="true">
+    <div id="congrats-panel" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:100001;">
+      <h2 id="congrats-title">Congratulations!</h2>
+      <p id="congrats-message">You successfully managed your farm for 7 days!</p>
+      <div id="congrats-stats">
+        <p id="total-water-used">Total Water Used: 0</p>
+        <p id="final-health">Final Health: 100</p>
+      </div>
+      <div id="congrats-actions">
+        <button id="restart-btn">Play Again</button>
+        <button id="menu-btn">Main Menu</button>
+      </div>
+    </div>
 
-  <footer>
-    <img id="cw_logo" src="img/cw_logo_horizontal.png" alt="cw_logo">
-    <p style="margin: 10px;">Developed by <a href="https://charitywater.org" target="_blank">charity: water</a>
-  </footer>
+    </div> 
 
-  <!-- Game Over Overlay -->
-  <div id="game-over-overlay" aria-hidden="true">
+    <div id="game-over-overlay" aria-hidden="true">
     <div id="game-over-panel">
       <h2 id="game-over-title">Game Over</h2>
       <p id="game-over-reason">You ran out of resources.</p>
@@ -97,6 +106,11 @@
       </div>
     </div>
   </div>
+
+   <footer>
+    <img id="cw_logo" src="img/cw_logo_horizontal.png" alt="cw_logo">
+    <p style="margin: 10px;">Developed by <a href="https://charitywater.org" target="_blank">charity: water</a>
+  </footer>
 
     <script src="script.js"></script>
 </body>
