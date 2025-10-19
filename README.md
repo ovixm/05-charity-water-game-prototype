@@ -6,16 +6,6 @@ This first version should focus on core functionality — clickable elements, sc
 
 - Add Random Events
 
-- Add Difficulties
- - Easy
-  - Barrel Auto Built
-  - More Water Available
- - Normal
- - Hard
-  - Get Rid of Barrel
-  - Less Water Available
-
-- Add Starting Screen
 - Add Game Over
   - Add Restart
 - Add Congrats Screen

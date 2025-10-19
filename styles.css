@@ -39,14 +39,14 @@ body {
 #tutorial-screen {
   position: fixed;
   width: 100%;
-  height: calc(100vh - 70px);
+  height: 100%;
   background: url("start.png") no-repeat center center;
   background-size: contain;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   image-rendering: pixelated;
-  background-color: rgba(0, 0, 0, 0);
+  background-color:#FFC907;
   color: #f5f7ec;
   z-index: 30000;
 }
@@ -219,7 +219,7 @@ footer {
   top: 5px;
   left: 5px;
   font-size: 50px;
-  color: white;
+  color: #FFC907;
 
   z-index: 5;
 }
@@ -231,7 +231,7 @@ footer {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 64px;
-  color: white;
+  color: #FFC907;
   z-index: 5;
 }
 
@@ -261,11 +261,12 @@ footer {
   left: 0;
   width: 100%;
   height: calc(100vh - 70px);
-  background-color: black;
+  background: url("night-sky.jpg");
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease;
-  z-index: 20000;
+  image-rendering: pixelated;
+  z-index: 99999;
 }
 
 /* Fade to black (visible) */

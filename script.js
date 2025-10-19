@@ -62,6 +62,7 @@ button.addEventListener('touchend', () => {
 });
 
 let currentDifficulty = 'Normal';
+let switching = false;
 
 const easySwitch = document.getElementById('easy-game-btn');
 const normalSwitch = document.getElementById('normal-game-btn');
@@ -73,6 +74,8 @@ function setDifficulty(difficulty) {
   easySwitch.src = currentDifficulty === 'Easy' ? "switch-on.png" : "switch-off.png";
   normalSwitch.src = currentDifficulty === 'Normal' ? "switch-on.png" : "switch-off.png";
   hardSwitch.src = currentDifficulty === 'Hard' ? "switch-on.png" : "switch-off.png";
+
+  switching = true;
 }
 
 easySwitch.addEventListener('click', () => setDifficulty('Easy'));
@@ -784,8 +787,8 @@ function isColliding(nextX, nextY) {
 
       if (furnitureMap[cy][cx] == -3) {
         currentAction = 'barrel';
-        if(!barrelBuilt) {
-        triggerAction('[E] Build Barrel?');
+        if(!barrelBuilt && currentDifficulty !== 'Hard') {
+        triggerAction('[E] Build Barrel? 4 💧');
         }
         actionTriggered = true;
       }
@@ -896,6 +899,42 @@ function updateCow() {
   cow.style.backgroundPosition = `${bgX}px ${bgY}px`;
 }
 
+function switchDifficulty() {
+  if(currentDifficulty === 'Easy' && !started) {
+    document.getElementById('barrel').style.backgroundPosition = `0 0`;
+    barrelBuilt = true;
+    min = 7;
+    max = 8;
+
+    randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
+    wateravalible = randomInt;
+  }
+  else if(currentDifficulty === 'Hard' && !started) {
+    document.getElementById('barrel').style.backgroundPosition = `-48px 0`;
+    barrelBuilt = false;
+    min = 3;
+    max = 6;
+
+    randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
+    wateravalible = randomInt - 1;
+  }
+  else if(currentDifficulty === 'Normal' && !started) {
+    document.getElementById('barrel').style.backgroundPosition = `-48px 0`;
+    barrelBuilt = false;
+    min = 5;
+    max = 7;
+
+    randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
+    wateravalible = randomInt - 1;
+  }
+
+  waterE1.textContent = 'WATER: ' + wateravalible;
+
+  switching = false;
+
+}
+  
+
 function gameLoop() {
 
   if(window.innerWidth > 1100)
@@ -927,9 +966,16 @@ function gameLoop() {
     updateCow();
     updatePlant();
   }
+  else if (!started && switching) {
+    switchDifficulty();
+  }
   requestAnimationFrame(gameLoop);
 }
 
-
-
-gameLoop();
+if(health > 0 && crops > 0 && animals > 0)
+{
+  gameLoop();
+}
+else {
+  console.log("Game Over! One of your stats has dropped to zero.");
+}
