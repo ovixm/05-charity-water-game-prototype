@@ -8,7 +8,18 @@ let scalingFactor = 3; // Initial scaling factor
 let started = false;
 
 const player = document.getElementById('player');
-const speed = 2;
+let speed;
+
+if (window.innerWidth > 1100) {
+  speed = 3;
+} 
+else if (window.innerWidth > 800) {
+  speed = 2;
+} 
+else {
+  speed = 1.5;
+}
+
 let frameWidth = 16 * scalingFactor; // Width of a single frame in the sprite sheet
 let frameHeight = 16 * scalingFactor; // Height of a single frame in the sprite sheet
 const totalFrames = 8; // Total number of frames in the sprite sheet
@@ -750,7 +761,7 @@ const gardenTiles = [-2];
 
 function isColliding(nextX, nextY) {
 
-  let hitboxSize = 16 * scalingFactor;
+  let hitboxSize;
 
   if(window.innerWidth > 1100)
   {
@@ -784,10 +795,10 @@ function isColliding(nextX, nextY) {
 
   // Check all four corners of the hitbox
   const corners = [
-    [tileX, tileY],
-    [tileX + Math.floor(hitboxSize / (tileSize * 3)), tileY],
-    [tileX, tileY + Math.floor(hitboxSize / (tileSize * 3))],
-    [tileX + Math.floor(hitboxSize / (tileSize * 3)), tileY + Math.floor(hitboxSize / (tileSize * 3))]
+    [tileX, tileY], // Top-left
+    [tileX + Math.round(hitboxSize / (tileSize * 3)), tileY], // Top-right
+    [tileX, tileY + Math.round(hitboxSize / (tileSize * 3))], // Bottom-left
+    [tileX + Math.round(hitboxSize / (tileSize * 3)), tileY + Math.round(hitboxSize / (tileSize * 3))] // Bottom-right
   ];
 
   let isBlocked = false;
@@ -1159,9 +1170,9 @@ function gameLoop() {
   }
   else if(window.innerWidth > 800)
   {
-    scalingFactor = 2/3;
-    frameHeight = 48 * scalingFactor;
-    frameWidth = 48 * scalingFactor;
+    scalingFactor = 2;
+    frameHeight = 16 * scalingFactor;
+    frameWidth = 16 * scalingFactor;
     frameHeightCow = 24;
     frameWidthCow = 24;
     frameWidthPlant = 32;
@@ -1169,9 +1180,9 @@ function gameLoop() {
   }
   else
   {
-    scalingFactor = 1/2;
-    frameHeight = 48 * scalingFactor;
-    frameWidth = 48 * scalingFactor;
+    scalingFactor = 1.5;
+    frameHeight = 16 * scalingFactor;
+    frameWidth = 16 * scalingFactor;
     frameHeightCow = 16;
     frameWidthCow = 16;
     frameWidthPlant = 24;
